@@ -4061,13 +4061,13 @@
             // Hyperscaler-specific explanations
             if (isHyperscaler) {
                 const hyperExplanations = {
-                    "Self-Build": "You have all assets + hyperscaler demand. PUSH FOR OWNERSHIP. Don't give up equity - their IG credit unlocks 60-70% project debt. You're in the strongest negotiating position.",
-                    "Capital Partnership": "You have the assets but need capital. Hyperscaler contract makes this highly financeable - you have leverage. Negotiate dev fee ($10-20M) + promote (20%+ above hurdle) + operating control.",
-                    "Infra Partnership": `Missing ${missingStr}, but you have hyperscaler demand - that's your leverage. Partner for the gaps but push to retain majority ownership. Don't let the partner extract too much value.`,
+                    "Self-Build": "You have all assets + hyperscaler demand, can push for ownership/equity - their IG credit unlocks 60-70% project debt",
+                    "Capital Partnership": "Assets secured but capital required. Hyperscaler contract makes this highly financeable, negotiate dev fee, promote (20%+ above hurdle) and operating control.",
+                    "Infra Partnership": `Missing ${missingStr}, but you have hyperscaler demand. Partner for the gaps but push to retain majority ownership`,
                     "Infra JV": `Missing ${missingStr}, but hyperscaler demand is strong leverage. JV structure lets you share risk while preserving upside. Ensure Crusoe controls operations and customer relationship.`,
                     "Site JV": "Site partner brings land, you bring hyperscaler demand. JV shares risk but your demand is the unlock - negotiate strong operating control and expansion rights.",
-                    "Hyperscaler-Backed": "Missing key assets but have hyperscaler demand. Let them fund the project. Negotiate: O&M fees ($8-15/kW/yr), potential minority equity (10-20%), and long-term operating agreement.",
-                    "Find Offtake First": "You have infrastructure ready. With hyperscaler interest, push to convert to signed LOI/contract before engaging other partners or lenders.",
+                    "Hyperscaler-Backed": "Missing key assets but have hyperscaler demand that can fund project",
+                    "Find Offtake First": "You have infrastructure ready, with hyperscaler interest push to convert to signed LOI/contract before engaging other partners or lenders.",
                     "Pipeline Development": "Early stage but hyperscaler interest is valuable. Use it to attract site/power partners. Don't over-commit on structure until you have more assets."
                 };
                 return hyperExplanations[dealType] || "";
@@ -4075,9 +4075,9 @@
 
             // Standard explanations
             const explanations = {
-                "Self-Build": "You have all key assets: power, site, offtake, and capital. Maximize ownership and returns with a project finance structure. You're in the driver's seat.",
-                "Self-Build (Spec)": "You have infrastructure but no committed offtake - spec/merchant risk. This requires strong conviction in demand and significant balance sheet capacity. Consider multi-tenant or pre-leasing to de-risk.",
-                "Capital Partnership": "You have power, site, and demand locked - but Crusoe needs outside equity. A capital partner (like Brookfield or DigitalBridge) fills this gap while you retain development and operating control.",
+                "Self-Build": "You have all key assets: power, site, offtake, and capital. Maximize ownership and returns with a project finance structure",
+                "Self-Build (Spec)": "You have infrastructure but no committed offtake. Requires strong conviction in demand and significant balance sheet capacity. Consider multi-tenant or pre-leasing to de-risk.",
+                "Capital Partnership": "You have power, site, and demand locked - but Crusoe needs outside equity. A capital partner (like Brookfield or DigitalBridge) fills the gap while you retain control.",
                 "Capital Partnership (Spec Risk)": "Building spec without committed offtake AND need outside capital. This is a tough sell - partners want contracted cash flows. Consider multi-tenant with signed customers or get LOIs first.",
                 "Infra Partnership": `You're missing ${missingStr}. Partner with a utility, developer, or infrastructure player who has these assets. Your ${hasOfftake ? 'demand' : 'expertise'} is your leverage.`,
                 "Infra JV": `You're missing ${missingStr}. Form a JV with an infrastructure partner who has these assets. Shared ownership aligns incentives - partner gets upside from your demand, you get access to their assets.`,
@@ -4563,7 +4563,7 @@
                 return `Almost there. Address ${gaps[0].toLowerCase()} to unlock better financing terms.`;
             }
             
-            return `Focus on securing ${gaps.slice(0, 2).join(' and ').toLowerCase()} first. This will clarify your optimal deal structure.`;
+            return `Focus on securing ${gaps.slice(0, 2).join(' and ').toLowerCase()} first. Secure LOIs or pre-lease commitments first to improve debt terms.`;
         }
 
         // Toggle category
@@ -4801,23 +4801,29 @@
                 }
                 i++;
             }
-            
-            // Merge financing strategy into steps for ALL deal types (max 2-3 items)
-            const financingStrategy = getFinancingStrategy();
+
+              // Merge financing strategy (max 3 items), prioritized
+            const financingStrategy = (typeof getFinancingStrategy === 'function')
+                ? getFinancingStrategy()
+                : [];
+
             let financingCount = 0;
+            const MAX_FINANCING = 3;
+
             financingStrategy.forEach(section => {
-                section.items.forEach(item => {
-                    if (financingCount < 3) {  // Cap financing items at 3
-                        steps.unshift({ 
-                            type: 'financing', 
-                            text: item
-                        });
+                (section.items || []).forEach(item => {
+                    if (financingCount >= MAX_FINANCING) return;
+
+                    // Avoid duplicates
+                    if (!steps.find(s => s.text === item)) {
+                        steps.unshift({ type: 'financing', text: item });
                         financingCount++;
                     }
                 });
             });
+
             
-            return steps.slice(0, 6); // Increase from 5 to 6 total steps
+            return steps.slice(0, 6); // Max 6 steps
         }
 
         // Generate financing strategy
