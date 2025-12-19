@@ -4468,12 +4468,15 @@
                 : '<span style="color: var(--text-muted);">Complete inputs to see partner recommendations.</span>';
 
             // Build next steps
-            const nextStepsList = nextSteps.slice(0, 3).map(step => `
-                <div class="next-step-item">
-                    <span class="next-step-arrow">→</span>
-                    <span>${step.text}</span>
-                </div>
-            `).join('');
+            const nextStepsList = nextSteps.slice(0, 3).map(step => {
+                const style = step.type === 'financing' ? 'font-weight: 600;' : '';
+                return `
+                    <div class="next-step-item" style="${style}">
+                        <span class="next-step-arrow">→</span>
+                        <span>${step.text}</span>
+                    </div>
+                `;
+            }).join('');
 
             const economicsLine = `IRR ${fin.irr || '—'} • Debt: ${fin.debtCost || '—'} • Equity: ${fin.equityCheck || '—'}`;
 
@@ -4799,7 +4802,22 @@
                 i++;
             }
             
-            return steps.slice(0, 5); // Max 5 steps
+            // Merge financing strategy into steps for ALL deal types (max 2-3 items)
+            const financingStrategy = getFinancingStrategy();
+            let financingCount = 0;
+            financingStrategy.forEach(section => {
+                section.items.forEach(item => {
+                    if (financingCount < 3) {  // Cap financing items at 3
+                        steps.unshift({ 
+                            type: 'financing', 
+                            text: item
+                        });
+                        financingCount++;
+                    }
+                });
+            });
+            
+            return steps.slice(0, 6); // Increase from 5 to 6 total steps
         }
 
         // Generate financing strategy
