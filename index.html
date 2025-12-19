@@ -4830,8 +4830,8 @@
             const projectMW = state.project_mw;
             const projectCapex = state.project_capex;
             
-            // Self-Build financing strategy
-            if (dealType === 'Self-Build' || dealType === 'Self-Build (Spec)') {
+            // Self-Build financing strategy (ONLY with contracted offtake)
+            if (dealType === 'Self-Build') {
                 const debtItems = [
                     'Target 55-65% leverage with senior secured debt',
                     'Engage 2-3 lead arrangers (JP Morgan, MUFG, Brookfield Credit)',
@@ -4854,21 +4854,21 @@
                     title: 'Debt Financing Strategy',
                     items: debtItems
                 });
-                if (dealType === 'Self-Build (Spec)') {
-                    sections.push({
-                        title: 'Spec Risk Mitigation',
-                        items: [
-                            'Secure LOIs or pre-lease commitments to improve debt terms',
-                            'Consider delayed draw or construction-only facility',
-                            'Build in flexibility for tenant improvements',
-                            'Plan for higher equity contribution (40-50%)'
-                        ]
-                    });
-                }
+            } else if (dealType === 'Self-Build (Spec)') {
+                // ONLY for spec builds without contracted offtake
+                sections.push({
+                    title: 'Spec Risk Mitigation',
+                    items: [
+                        'Secure LOIs or pre-lease commitments to improve debt terms',
+                        'Consider delayed draw or construction-only facility',
+                        'Build in flexibility for tenant improvements',
+                        'Plan for higher equity contribution (75%+)'
+                    ]
+                });
             }
             
-            // Capital Partnership strategy
-            if (dealType.includes('Capital Partnership')) {
+            // Capital Partnership strategy (with contracted offtake)
+            if (dealType === 'Capital Partnership') {
                 const outreachItems = [
                     'Prepare 2-page teaser and detailed investment memo',
                     'Build financial model showing 15-20% levered IRR base case',
@@ -4894,6 +4894,26 @@
                         'Secure development fee ($10-20M depending on size)',
                         'Push for 20%+ promote above preferred return',
                         'Keep operating and asset management fees'
+                    ]
+                });
+            } else if (dealType === 'Capital Partnership (Spec Risk)') {
+                // Spec build needs different approach - no contracted offtake
+                sections.push({
+                    title: 'Spec Partnership Strategy',
+                    items: [
+                        'Secure LOIs from potential customers before partner outreach',
+                        'Target partners with AI/data center thesis comfortable with merchant risk',
+                        'Frame as platform bet, not single-asset investment',
+                        'Show demand pipeline and Crusoe ability to fill space'
+                    ]
+                });
+                sections.push({
+                    title: 'Risk Mitigation',
+                    items: [
+                        'Consider multi-tenant strategy to diversify customer risk',
+                        'Negotiate for higher promote once facility is leased up',
+                        'Partner absorbs majority of merchant risk for larger equity stake',
+                        'Build in flexibility for expansion as demand materializes'
                     ]
                 });
             }
