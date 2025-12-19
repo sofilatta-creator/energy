@@ -4798,8 +4798,29 @@
                 }
                 i++;
             }
+
+              // Merge financing strategy (max 3 items), prioritized
+            const financingStrategy = (typeof getFinancingStrategy === 'function')
+                ? getFinancingStrategy()
+                : [];
+
+            let financingCount = 0;
+            const MAX_FINANCING = 3;
+
+            financingStrategy.forEach(section => {
+                (section.items || []).forEach(item => {
+                    if (financingCount >= MAX_FINANCING) return;
+
+                    // Avoid duplicates
+                    if (!steps.find(s => s.text === item)) {
+                        steps.unshift({ type: 'financing', text: item });
+                        financingCount++;
+                    }
+                });
+            });
+
             
-            return steps.slice(0, 5); // Max 5 steps
+            return steps.slice(0, 6); // Max 6 steps
         }
 
         // Generate financing strategy
