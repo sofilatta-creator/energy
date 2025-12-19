@@ -4066,8 +4066,8 @@
                     "Infra Partnership": `Missing ${missingStr}, but you have hyperscaler demand. Partner for the gaps but push to retain majority ownership`,
                     "Infra JV": `Missing ${missingStr}, but hyperscaler demand is strong leverage. JV structure lets you share risk while preserving upside. Ensure Crusoe controls operations and customer relationship.`,
                     "Site JV": "Site partner brings land, you bring hyperscaler demand. JV shares risk but your demand is the unlock - negotiate strong operating control and expansion rights.",
-                    "Hyperscaler-Backed": "Missing key assets but have hyperscaler demand. Let them fund the project. Negotiate: O&M fees ($8-15/kW/yr), potential minority equity (10-20%), and long-term operating agreement.",
-                    "Find Offtake First": "You have infrastructure ready. With hyperscaler interest, push to convert to signed LOI/contract before engaging other partners or lenders.",
+                    "Hyperscaler-Backed": "Missing key assets but have hyperscaler demand that can fund project",
+                    "Find Offtake First": "You have infrastructure ready, with hyperscaler interest push to convert to signed LOI/contract before engaging other partners or lenders.",
                     "Pipeline Development": "Early stage but hyperscaler interest is valuable. Use it to attract site/power partners. Don't over-commit on structure until you have more assets."
                 };
                 return hyperExplanations[dealType] || "";
@@ -4075,9 +4075,9 @@
 
             // Standard explanations
             const explanations = {
-                "Self-Build": "You have all key assets: power, site, offtake, and capital. Maximize ownership and returns with a project finance structure. You're in the driver's seat.",
-                "Self-Build (Spec)": "You have infrastructure but no committed offtake - spec/merchant risk. This requires strong conviction in demand and significant balance sheet capacity. Consider multi-tenant or pre-leasing to de-risk.",
-                "Capital Partnership": "You have power, site, and demand locked - but Crusoe needs outside equity. A capital partner (like Brookfield or DigitalBridge) fills this gap while you retain development and operating control.",
+                "Self-Build": "You have all key assets: power, site, offtake, and capital. Maximize ownership and returns with a project finance structure",
+                "Self-Build (Spec)": "You have infrastructure but no committed offtake. Requires strong conviction in demand and significant balance sheet capacity. Consider multi-tenant or pre-leasing to de-risk.",
+                "Capital Partnership": "You have power, site, and demand locked - but Crusoe needs outside equity. A capital partner (like Brookfield or DigitalBridge) fills the gap while you retain control.",
                 "Capital Partnership (Spec Risk)": "Building spec without committed offtake AND need outside capital. This is a tough sell - partners want contracted cash flows. Consider multi-tenant with signed customers or get LOIs first.",
                 "Infra Partnership": `You're missing ${missingStr}. Partner with a utility, developer, or infrastructure player who has these assets. Your ${hasOfftake ? 'demand' : 'expertise'} is your leverage.`,
                 "Infra JV": `You're missing ${missingStr}. Form a JV with an infrastructure partner who has these assets. Shared ownership aligns incentives - partner gets upside from your demand, you get access to their assets.`,
