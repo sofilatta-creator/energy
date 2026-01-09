@@ -4985,62 +4985,6 @@
             return sections;
         }
 
-        // Render next steps
-        function renderNextSteps() {
-            const steps = getNextSteps();
-            const container = document.getElementById('nextSteps');
-            
-            if (steps.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 1.6rem;">Complete more inputs to see recommended next steps.</p>';
-                return;
-            }
-            
-            container.innerHTML = steps.map((step, i) => `
-                <div class="step-item ${step.type === 'risk' ? 'risk' : step.type === 'warning' ? 'warning' : ''}">
-                    <span class="step-number">${step.type === 'risk' ? '!' : step.type === 'warning' ? '⚠' : i + 1}</span>
-                    <span class="step-text">${step.text}</span>
-                </div>
-            `).join('');
-        }
-
-        // Render financing strategy
-        function renderFinancingChecklist() {
-            const sections = getFinancingStrategy();
-            const container = document.getElementById('financingChecklist');
-            
-            if (sections.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 1.6rem;">Complete readiness checklist to see financing strategy.</p>';
-                return;
-            }
-            
-            container.innerHTML = sections.map(section => `
-                <div class="financing-section">
-                    <div class="financing-section-title">${section.title}</div>
-                    <div class="financing-items">
-                        ${section.items.map(item => `
-                            <div class="financing-item">
-                                <span class="strategy-bullet">→</span>
-                                <span class="item-text">${item}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ===== COLLAPSE / EXPAND =====
-        function expandAll() {
-            document.querySelectorAll('.category').forEach(cat => {
-                cat.classList.remove('collapsed');
-            });
-        }
-
-        function collapseAll() {
-            document.querySelectorAll('.category').forEach(cat => {
-                cat.classList.add('collapsed');
-            });
-        }
-
         // ===== PROGRESS BAR =====
         function updateProgressBar() {
             let complete = 0;
