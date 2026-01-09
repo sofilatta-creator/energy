@@ -4467,16 +4467,33 @@
                 `).join('')
                 : '<span style="color: var(--text-muted);">Complete inputs to see partner recommendations.</span>';
 
-            // Build next steps
-            const nextStepsList = nextSteps.slice(0, 3).map(step => {
+            // Build next steps with sections
+            let nextStepsList = '';
+            let lastSection = null;
+            
+            nextSteps.forEach((step, index) => {
+                let sectionHeader = '';
+                
+                // Add section headers
+                if (step.type === 'goal' && lastSection !== 'goal') {
+                    sectionHeader = '<div style="color: var(--text-muted); font-size: 1.4rem; margin-top: 12px; margin-bottom: 8px;">High-Level Goals</div>';
+                    lastSection = 'goal';
+                } else if ((step.type === 'action' || step.type === 'financing') && lastSection !== 'action') {
+                    sectionHeader = '<div style="color: var(--text-muted); font-size: 1.4rem; margin-top: 12px; margin-bottom: 8px;">Immediate Actions</div>';
+                    lastSection = 'action';
+                } else if (step.type === 'warning' && lastSection !== 'warning') {
+                    sectionHeader = '<div style="color: var(--text-muted); font-size: 1.4rem; margin-top: 12px; margin-bottom: 8px;">Watch Out</div>';
+                    lastSection = 'warning';
+                }
+                
                 const style = step.type === 'financing' ? 'font-weight: 600;' : '';
-                return `
+                nextStepsList += sectionHeader + `
                     <div class="next-step-item" style="${style}">
                         <span class="next-step-arrow">→</span>
                         <span>${step.text}</span>
                     </div>
                 `;
-            }).join('');
+            });
 
             const economicsLine = `IRR ${fin.irr || '—'} • Debt: ${fin.debtCost || '—'} • Equity: ${fin.equityCheck || '—'}`;
 
@@ -4647,6 +4664,75 @@
                 </div>`;
             });
             container.innerHTML = items.join('');
+        }
+
+        // Get strategic goals for each deal type
+        function getStrategicGoals(dealType) {
+            const goals = {
+                'Self-Build': [
+                    'Secure 2-3 competing lenders to negotiate tighter spreads and better terms',
+                    'Push for 7-10 year tenor to match contract length and avoid refinancing risk'
+                ],
+                'Self-Build (Spec)': [
+                    'Secure pre-leasing commitments for 30-50% of capacity before construction',
+                    'Build modular to scale with demand and enable pivot if lease-up is slower'
+                ],
+                'Capital Partnership (Spec Risk)': [
+                    'Target family offices and growth equity with AI/data center thesis',
+                    'Negotiate higher promote (20%+) once facility is leased up to align incentives'
+                ],
+                'Capital Partnership': [
+                    'Run competitive process with 3-5 capital partners to maximize terms',
+                    'Secure operating control, customer relationship ownership, and ROFR on future deals'
+                ],
+                'Infra Partnership': [
+                    'Value contributed assets fairly - don\'t overpay for stranded infrastructure',
+                    'Negotiate operating control and ability to bring your own customers'
+                ],
+                'Site Partnership': [
+                    'Structure economics based on partner motivation (yield, strategic value, or exit)',
+                    'Lock in expansion rights and exclusivity for future phases'
+                ],
+                'Site JV': [
+                    'Align on capital contribution rules and dilution mechanics upfront',
+                    'Pre-set buyout formulas and lock in Phase 2/3 expansion rights'
+                ],
+                'Infra JV': [
+                    'Ensure fair valuation of contributed infrastructure - independent appraisal if needed',
+                    'Secure Crusoe operating control and customer ownership in JV agreement'
+                ],
+                'Hyperscaler-Backed': [
+                    'Compete on speed and execution reliability, not just price',
+                    'Negotiate escalators tied to inflation and lock in expansion rights for future capacity'
+                ],
+                'Find Offtake First': [
+                    'Prioritize BD resources on hyperscalers, AI cloud providers, and enterprise AI initiatives',
+                    'Use site optionality as selling point to customers (faster deployment timeline)'
+                ],
+                'Pipeline Development': [
+                    'Run parallel paths: source sites, build customer pipeline, develop partner relationships',
+                    'Move fast on promising opportunities - good sites and customers get taken quickly'
+                ]
+            };
+            return goals[dealType] || goals['Self-Build'];
+        }
+
+        // Get critical watch-out for each deal type
+        function getWatchOut(dealType) {
+            const watchOuts = {
+                'Self-Build': 'Monitor construction cost overruns and interconnection delays - ensure EPC contract has appropriate LDs',
+                'Self-Build (Spec)': 'Don\'t over-invest in site development without demand visibility - monitor competing builds',
+                'Capital Partnership (Spec Risk)': 'Partner may want control given merchant risk - negotiate operating control and capital call timing',
+                'Capital Partnership': 'Align on hold period and exit timing upfront to avoid conflicts down the road',
+                'Infra Partnership': 'Conduct thorough due diligence on asset quality - check for deferred maintenance and capacity constraints',
+                'Site Partnership': 'Complete site due diligence early - zoning, environmental, title issues can derail the deal',
+                'Site JV': 'Define governance structure clearly - avoid deadlocks on major decisions and capital calls',
+                'Infra JV': 'Watch for asset valuation disputes at formation and regulatory constraints on power use',
+                'Hyperscaler-Backed': 'Single customer concentration is high risk - hyperscaler may in-source long-term',
+                'Find Offtake First': 'Don\'t over-invest in site without customer commitment - opportunity cost adds up',
+                'Pipeline Development': 'Avoid analysis paralysis - move decisively when opportunity emerges'
+            };
+            return watchOuts[dealType] || watchOuts['Self-Build'];
         }
 
         // Generate next steps based on current state
@@ -4823,7 +4909,23 @@
             });
 
             
-            return steps.slice(0, 6); // Max 6 steps
+            // Build final next steps: 2 goals + 3 actions + 1 warning
+            const strategicGoals = getStrategicGoals(dealType).map(text => ({ 
+                type: 'goal', 
+                text 
+            }));
+            
+            const immediateActions = steps.slice(0, 3).map(step => ({ 
+                ...step, 
+                type: step.type === 'financing' ? 'financing' : 'action'
+            }));
+            
+            const watchOut = { 
+                type: 'warning', 
+                text: getWatchOut(dealType) 
+            };
+            
+            return [...strategicGoals, ...immediateActions, watchOut];
         }
 
         // Generate financing strategy
